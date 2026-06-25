@@ -1,122 +1,148 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { getStatus, plead, resetStatus, forceOpen } from './services/api';
+import LockIndicator from './components/LockIndicator';
+import StatusPanel from './components/StatusPanel';
+import PleadForm from './components/PleadForm';
+import ResponseCard from './components/ResponseCard';
+import './styles/app.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [status, setStatus] = useState('LOCKED');
+    const [attempts, setAttempts] = useState(0);
+    const [lastScore, setLastScore] = useState(0);
+    
+    const [isJudging, setIsJudging] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [evaluation, setEvaluation] = useState(null);
+    const [error, setError] = useState('');
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    // Fetch status from API
+    const fetchStatus = async () => {
+        try {
+            const data = await getStatus();
+            if (!isJudging) {
+                setStatus(data.status);
+                setAttempts(data.attempts);
+                setLastScore(data.lastScore);
+            }
+        } catch (err) {
+            console.error('Error fetching status:', err);
+            setError('Could not connect to the backend server.');
+        }
+    };
 
-      <div className="ticks"></div>
+    // Polling interval
+    useEffect(() => {
+        fetchStatus();
+        const interval = setInterval(fetchStatus, 3000);
+        return () => clearInterval(interval);
+    }, [isJudging]);
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+    // Submit plea handler
+    const handlePleadSubmit = async (text) => {
+        setIsLoading(true);
+        setIsJudging(true);
+        setError('');
+        
+        try {
+            // Artificial delay to allow judging state/animation to reflect
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            
+            const result = await plead(text);
+            setEvaluation(result);
+            
+            // Sync status
+            const updated = await getStatus();
+            setStatus(updated.status);
+            setAttempts(updated.attempts);
+            setLastScore(updated.lastScore);
+        } catch (err) {
+            console.error('Error pleading:', err);
+            setError('The Judge is currently unreachable.');
+        } finally {
+            setIsLoading(false);
+            setIsJudging(false);
+        }
+    };
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    // Admin reset
+    const handleReset = async () => {
+        try {
+            setError('');
+            const data = await resetStatus();
+            setStatus(data.status);
+            setAttempts(data.attempts);
+            setLastScore(data.lastScore);
+            setEvaluation(null);
+        } catch (err) {
+            console.error('Reset error:', err);
+            setError('Failed to reset state.');
+        }
+    };
+
+    // Admin force open
+    const handleForceOpen = async () => {
+        try {
+            setError('');
+            const data = await forceOpen();
+            setStatus(data.status);
+            setAttempts(data.attempts);
+            setLastScore(data.lastScore);
+        } catch (err) {
+            console.error('Force open error:', err);
+            setError('Failed to force open.');
+        }
+    };
+
+    const currentVisualStatus = isJudging ? 'JUDGING' : status;
+
+    return (
+        <div className="app-container">
+            <header>
+                <div className="logo-section">
+                    <h1>Begging Rights</h1>
+                    <p>Voice Gate Portal</p>
+                </div>
+                <div className="admin-actions">
+                    <button className="btn btn-outline btn-sm" onClick={handleForceOpen}>
+                        Open
+                    </button>
+                    <button className="btn btn-danger btn-sm" onClick={handleReset}>
+                        Reset
+                    </button>
+                </div>
+            </header>
+
+            {error && (
+                <div style={{ color: 'var(--accent-red)', fontSize: '0.75rem', textAlign: 'center', margin: '0.25rem 0' }}>
+                    <strong>Error:</strong> {error}
+                </div>
+            )}
+
+            <main className="dashboard-grid">
+                <section className="sidebar-col">
+                    <LockIndicator status={currentVisualStatus} />
+                    <StatusPanel 
+                        status={status} 
+                        attempts={attempts} 
+                        lastScore={lastScore} 
+                    />
+                </section>
+
+                <section className="main-col">
+                    <PleadForm 
+                        onSubmit={handlePleadSubmit} 
+                        isLoading={isLoading} 
+                    />
+                    <ResponseCard evaluation={evaluation} />
+                </section>
+            </main>
+
+            <footer>
+                <p>Begging Rights Voice Portal © 2026</p>
+            </footer>
+        </div>
+    );
 }
 
-export default App
+export default App;
