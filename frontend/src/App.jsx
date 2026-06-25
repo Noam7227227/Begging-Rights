@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getStatus, plead, resetStatus, forceOpen } from './services/api';
+import { speak } from './services/speech.service';
 import LockIndicator from './components/LockIndicator';
 import StatusPanel from './components/StatusPanel';
-import PleadForm from './components/PleadForm';
+import VoiceRecorder from './components/VoiceRecorder';
 import ResponseCard from './components/ResponseCard';
 import './styles/app.css';
 
@@ -38,6 +39,13 @@ function App() {
         return () => clearInterval(interval);
     }, [isJudging]);
 
+    // Automatically read the judge's reply aloud when it changes
+    useEffect(() => {
+        if (evaluation?.reply) {
+            speak(evaluation.reply);
+        }
+    }, [evaluation]);
+
     // Submit plea handler
     const handlePleadSubmit = async (text) => {
         setIsLoading(true);
@@ -45,8 +53,8 @@ function App() {
         setError('');
         
         try {
-            // Artificial delay to allow judging state/animation to reflect
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Short delay to display a transition state in the UI
+            await new Promise((resolve) => setTimeout(resolve, 800));
             
             const result = await plead(text);
             setEvaluation(result);
@@ -74,6 +82,11 @@ function App() {
             setAttempts(data.attempts);
             setLastScore(data.lastScore);
             setEvaluation(null);
+            
+            // Cancel any reading speech
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
         } catch (err) {
             console.error('Reset error:', err);
             setError('Failed to reset state.');
@@ -130,7 +143,7 @@ function App() {
                 </section>
 
                 <section className="main-col">
-                    <PleadForm 
+                    <VoiceRecorder 
                         onSubmit={handlePleadSubmit} 
                         isLoading={isLoading} 
                     />
