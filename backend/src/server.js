@@ -14,6 +14,7 @@ app.use(require('./routes/status.routes'));
 app.use(require('./routes/lock.routes'));
 app.use(require('./routes/admin.routes'));
 app.use(require('./routes/plead.routes'));
+app.use(require('./routes/tts.routes'));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);

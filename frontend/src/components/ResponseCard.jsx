@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResponseCard = ({ evaluation }) => {
+const ResponseCard = ({ evaluation, isGeneratingAudio }) => {
     if (!evaluation) {
         return (
             <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '150px', color: 'var(--text-secondary)' }}>
@@ -20,9 +20,17 @@ const ResponseCard = ({ evaluation }) => {
         <div className="glass-card response-container">
             <div className="response-header">
                 <h3 className="panel-title" style={{ margin: 0 }}>Judgment Verdict</h3>
-                <span className={`response-badge ${shouldOpen ? 'success' : 'fail'}`}>
-                    {shouldOpen ? 'Approved' : 'Denied'}
-                </span>
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                    {isGeneratingAudio && (
+                        <span className="response-badge" style={{ background: 'rgba(167, 139, 250, 0.15)', color: 'var(--accent-purple)', border: '1px solid rgba(167, 139, 250, 0.25)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <span className="spinner" style={{ width: '8px', height: '8px', border: '1.2px solid rgba(255,255,255,0.3)', borderTopColor: '#ffffff' }}></span>
+                            <span>Speaking...</span>
+                        </span>
+                    )}
+                    <span className={`response-badge ${shouldOpen ? 'success' : 'fail'}`}>
+                        {shouldOpen ? 'Approved' : 'Denied'}
+                    </span>
+                </div>
             </div>
 
             <div className="response-reply-box">

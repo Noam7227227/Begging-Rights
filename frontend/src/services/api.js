@@ -34,10 +34,16 @@ export const forceOpen = async () => {
     return response.data;
 };
 
+export const getSpeechAudio = async (text) => {
+    const response = await apiClient.post('/api/tts', { text }, { responseType: 'blob' });
+    return response.data;
+};
+
 export default {
     getStatus,
     getLockState,
     plead,
     resetStatus,
-    forceOpen
+    forceOpen,
+    getSpeechAudio
 };

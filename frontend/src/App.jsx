@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getStatus, plead, resetStatus, forceOpen } from './services/api';
+import React, { useState, useEffect, useRef } from 'react';
+import { getStatus, plead, resetStatus, forceOpen, getSpeechAudio } from './services/api';
 import { speak } from './services/speech.service';
 import LockIndicator from './components/LockIndicator';
 import StatusPanel from './components/StatusPanel';
@@ -16,6 +16,10 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [evaluation, setEvaluation] = useState(null);
     const [error, setError] = useState('');
+
+    const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+    const activeAudioRef = useRef(null);
+    const lastSpokenEvaluationRef = useRef(null);
 
     // Fetch status from API
     const fetchStatus = async () => {
@@ -39,11 +43,90 @@ function App() {
         return () => clearInterval(interval);
     }, [isJudging]);
 
-    // Automatically read the judge's reply aloud when it changes
+    // Handle Text-To-Speech playback when the reply changes
     useEffect(() => {
-        if (evaluation?.reply) {
-            speak(evaluation.reply);
+        if (!evaluation?.reply) {
+            lastSpokenEvaluationRef.current = null;
+            return;
         }
+
+        // Avoid starting duplicate voice playbacks for the same evaluation object
+        if (lastSpokenEvaluationRef.current === evaluation) {
+            return;
+        }
+
+        lastSpokenEvaluationRef.current = evaluation;
+
+        const handleVoicePlayback = async () => {
+            // Stop any currently playing ElevenLabs audio
+            if (activeAudioRef.current) {
+                activeAudioRef.current.pause();
+                activeAudioRef.current = null;
+            }
+
+            // Cancel any browser Web Speech synthesis
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+
+            setIsGeneratingAudio(true);
+            try {
+                // Request generated voice blob from ElevenLabs backend endpoint
+                const blob = await getSpeechAudio(evaluation.reply);
+                
+                // If evaluation has changed since we started fetching, do not play
+                if (lastSpokenEvaluationRef.current !== evaluation) {
+                    return;
+                }
+
+                const audioUrl = URL.createObjectURL(blob);
+                
+                const audio = new Audio(audioUrl);
+                activeAudioRef.current = audio;
+
+                audio.onended = () => {
+                    setIsGeneratingAudio(false);
+                    URL.revokeObjectURL(audioUrl);
+                    if (activeAudioRef.current === audio) {
+                        activeAudioRef.current = null;
+                    }
+                };
+
+                audio.onerror = (e) => {
+                    console.warn('ElevenLabs audio playback failed, falling back to Web Speech API:', e);
+                    setIsGeneratingAudio(false);
+                    URL.revokeObjectURL(audioUrl);
+                    if (activeAudioRef.current === audio) {
+                        activeAudioRef.current = null;
+                    }
+                    // Only play fallback if the current evaluation is still active
+                    if (lastSpokenEvaluationRef.current === evaluation) {
+                        speak(evaluation.reply);
+                    }
+                };
+
+                await audio.play();
+            } catch (err) {
+                console.warn('ElevenLabs generation failed, falling back to Web Speech API:', err.message);
+                setIsGeneratingAudio(false);
+                // Only play fallback if the current evaluation is still active
+                if (lastSpokenEvaluationRef.current === evaluation) {
+                    speak(evaluation.reply);
+                }
+            }
+        };
+
+        handleVoicePlayback();
+
+        // Cleanup on unmount or reply change
+        return () => {
+            if (activeAudioRef.current) {
+                activeAudioRef.current.pause();
+            }
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
     }, [evaluation]);
 
     // Submit plea handler
@@ -82,11 +165,6 @@ function App() {
             setAttempts(data.attempts);
             setLastScore(data.lastScore);
             setEvaluation(null);
-            
-            // Cancel any reading speech
-            if (typeof window !== 'undefined' && window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-            }
         } catch (err) {
             console.error('Reset error:', err);
             setError('Failed to reset state.');
@@ -147,7 +225,10 @@ function App() {
                         onSubmit={handlePleadSubmit} 
                         isLoading={isLoading} 
                     />
-                    <ResponseCard evaluation={evaluation} />
+                    <ResponseCard 
+                        evaluation={evaluation} 
+                        isGeneratingAudio={isGeneratingAudio} 
+                    />
                 </section>
             </main>
 
