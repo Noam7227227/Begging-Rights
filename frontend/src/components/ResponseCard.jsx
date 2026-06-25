@@ -44,15 +44,15 @@ const ResponseCard = ({ evaluation, isGeneratingAudio }) => {
                         {score} / 100
                     </span>
                 </div>
-                
+
                 <div className="score-gauge-bg">
-                    <div 
-                        className={`score-gauge-fill ${shouldOpen ? 'success' : 'fail'}`} 
+                    <div
+                        className={`score-gauge-fill ${shouldOpen ? 'success' : 'fail'}`}
                         style={{ width: `${score}%` }}
                     />
                     <div className="score-threshold-marker" title="Pass threshold (80)" />
                 </div>
-                
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                     <span>0</span>
                     <span style={{ position: 'relative', left: '30px' }}>Target (80)</span>

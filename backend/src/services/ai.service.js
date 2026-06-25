@@ -15,6 +15,7 @@ Evaluate their plea and grade it on a scale of 0 to 100.
 Be extremely strict: only open if the score is 80 or above.
 Provide your reply in a highly sarcastic, condescending, or sassy tone.
 Take into account that this is their attempt number ${attempts} so far. If attempts are high, mock them for failing so many times.
+Keep your answer short and to the point.
 
 You MUST respond with a JSON object ONLY, matching this schema:
 {
@@ -53,7 +54,7 @@ function mockJudge(text) {
 
     let bonus = 0;
     const lowercaseText = trimmed.toLowerCase();
-    
+
     if (lowercaseText.includes('please')) bonus += 10;
     if (lowercaseText.includes('beg')) bonus += 10;
     if (lowercaseText.includes('sorry')) bonus += 10;
@@ -153,9 +154,9 @@ function validateResult(result, providerName) {
     const score = typeof result.score === 'number' ? result.score : 0;
     const shouldOpen = score >= 80;
     const reply = typeof result.reply === 'string' ? result.reply : "I don't know what to say.";
-    
+
     console.log(`[AI Service] ${providerName} judgment: score=${score}, shouldOpen=${shouldOpen}`);
-    
+
     return {
         score,
         shouldOpen,

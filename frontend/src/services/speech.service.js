@@ -25,13 +25,13 @@ export const speak = (text, onEnd = null) => {
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
-    
+
     // Attempt to set a natural-sounding English voice
     const voices = window.speechSynthesis.getVoices();
     const englishVoice = voices.find(v => v.lang.startsWith('en-') && (v.name.includes('Google') || v.name.includes('Natural')))
         || voices.find(v => v.lang.startsWith('en'))
         || voices[0];
-        
+
     if (englishVoice) {
         utterance.voice = englishVoice;
     }
@@ -56,12 +56,12 @@ export const speak = (text, onEnd = null) => {
  */
 export const createSpeechRecognition = () => {
     if (!isSpeechSupported) return null;
-    
+
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
-    
+
     return recognition;
 };
 
