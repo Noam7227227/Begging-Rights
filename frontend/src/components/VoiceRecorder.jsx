@@ -166,8 +166,8 @@ const VoiceRecorder = ({ onSubmit, isLoading }) => {
                             minHeight: '3.25rem',
                             border: '1px solid var(--border-color)'
                         }}>
-                            {isRecording 
-                                ? (transcript ? `"${transcript}"` : 'Listening... Speak now') 
+                            {isRecording
+                                ? (transcript ? `"${transcript}"` : 'Listening... Speak now')
                                 : (transcript ? `Transcript: "${transcript}"` : 'Click Start and speak your plea...')
                             }
                         </div>

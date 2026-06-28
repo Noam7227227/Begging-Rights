@@ -11,7 +11,7 @@ function App() {
     const [status, setStatus] = useState('LOCKED');
     const [attempts, setAttempts] = useState(0);
     const [lastScore, setLastScore] = useState(0);
-    
+
     const [isJudging, setIsJudging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [evaluation, setEvaluation] = useState(null);
@@ -73,14 +73,14 @@ function App() {
             try {
                 // Request generated voice blob from ElevenLabs backend endpoint
                 const blob = await getSpeechAudio(evaluation.reply);
-                
+
                 // If evaluation has changed since we started fetching, do not play
                 if (lastSpokenEvaluationRef.current !== evaluation) {
                     return;
                 }
 
                 const audioUrl = URL.createObjectURL(blob);
-                
+
                 const audio = new Audio(audioUrl);
                 activeAudioRef.current = audio;
 
@@ -134,14 +134,14 @@ function App() {
         setIsLoading(true);
         setIsJudging(true);
         setError('');
-        
+
         try {
             // Short delay to display a transition state in the UI
             await new Promise((resolve) => setTimeout(resolve, 800));
-            
+
             const result = await plead(text);
             setEvaluation(result);
-            
+
             // Sync status
             const updated = await getStatus();
             setStatus(updated.status);
@@ -213,21 +213,21 @@ function App() {
             <main className="dashboard-grid">
                 <section className="sidebar-col">
                     <LockIndicator status={currentVisualStatus} />
-                    <StatusPanel 
-                        status={status} 
-                        attempts={attempts} 
-                        lastScore={lastScore} 
+                    <StatusPanel
+                        status={status}
+                        attempts={attempts}
+                        lastScore={lastScore}
                     />
                 </section>
 
                 <section className="main-col">
-                    <VoiceRecorder 
-                        onSubmit={handlePleadSubmit} 
-                        isLoading={isLoading} 
+                    <VoiceRecorder
+                        onSubmit={handlePleadSubmit}
+                        isLoading={isLoading}
                     />
-                    <ResponseCard 
-                        evaluation={evaluation} 
-                        isGeneratingAudio={isGeneratingAudio} 
+                    <ResponseCard
+                        evaluation={evaluation}
+                        isGeneratingAudio={isGeneratingAudio}
                     />
                 </section>
             </main>
