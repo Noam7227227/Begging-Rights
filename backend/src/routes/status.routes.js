@@ -1,3 +1,8 @@
+/**
+ * Status routes - health and telemetry endpoints.
+ * @module routes/status.routes
+ */
+
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/status.controller');

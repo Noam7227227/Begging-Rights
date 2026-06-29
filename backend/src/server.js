@@ -1,3 +1,9 @@
+/**
+ * Express server entrypoint for Begging Rights backend.
+ * Sets up middleware and registers API routes used by the frontend and devices.
+ * @module server
+ */
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');

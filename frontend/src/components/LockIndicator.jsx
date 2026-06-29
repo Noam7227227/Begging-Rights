@@ -1,3 +1,9 @@
+/**
+ * LockIndicator component
+ * Visual indicator showing current lock state with iconography and descriptions.
+ * @component
+ * @param {{status: string}} props
+ */
 import React from 'react';
 
 const LockIndicator = ({ status }) => {

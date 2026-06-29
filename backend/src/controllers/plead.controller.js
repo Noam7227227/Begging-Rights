@@ -1,3 +1,8 @@
+/**
+ * Plead controller - receives user pleas, forwards them to the AI judge, and updates state.
+ * @module controllers/plead.controller
+ */
+
 const aiService = require('../services/ai.service');
 const stateService = require('../services/state.service');
 const { LOCK_STATES } = require('../config/constants');

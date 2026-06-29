@@ -1,3 +1,8 @@
+/**
+ * TTS controller - handles requests to synthesize verdict text into audio.
+ * @module controllers/tts.controller
+ */
+
 const ttsService = require('../services/tts.service');
 
 module.exports = {

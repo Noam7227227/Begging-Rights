@@ -1,3 +1,9 @@
+/**
+ * VoiceRecorder component
+ * Records speech (when supported) and submits transcribed pleas to the parent.
+ * @component
+ * @param {{onSubmit: Function, isLoading: boolean}} props
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import speechService from '../services/speech.service';
 
@@ -60,7 +66,10 @@ const VoiceRecorder = ({ onSubmit, isLoading }) => {
         };
     }, [isSpeechSupported]);
 
-    // Start recording audio
+    /**
+     * Start speech recognition and clear previous transcript/errors.
+     * No-op if already recording or loading or unsupported.
+     */
     const startRecording = () => {
         if (isLoading || isRecording || !recognitionRef.current) return;
         setTranscript('');
@@ -73,7 +82,9 @@ const VoiceRecorder = ({ onSubmit, isLoading }) => {
         }
     };
 
-    // Stop recording and trigger plea submission
+    /**
+     * Stop speech recognition and submit the finalized transcript to parent.
+     */
     const stopRecording = () => {
         if (!isRecording || !recognitionRef.current) return;
         recognitionRef.current.stop();
@@ -92,7 +103,10 @@ const VoiceRecorder = ({ onSubmit, isLoading }) => {
         }, 400);
     };
 
-    // Text plea fallback submission
+    /**
+     * Handle fallback text submissions when speech recognition is unavailable.
+     * @param {Event} e - Form submit event
+     */
     const handleFallbackSubmit = (e) => {
         e.preventDefault();
         setError('');
