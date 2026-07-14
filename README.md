@@ -7,7 +7,7 @@ A tiny hackathon project for making cool, stupid, unnecessary things.
 This project wires together a web frontend, a Node.js backend, and an ESP32-based door latch so a sassy AI judge can decide whether to physically unlock a gate.
 
 Why it exists
-- Built fast for a hackathon: the goal was to make something playful and unnecessary.
+- Built fast for a hackathon: the goal was to make something playful and unnecessary- combining software and hardware together.
 - Objective: explore audio, speech-to-text, LLM-driven responses, and simple IoT actuation (ESP32 controlling a door latch).
 
 High-level architecture
@@ -42,8 +42,8 @@ Hardware
 - This was tested with an ESP32 controlling a small servo latch. The ESP polls the backend and will actuate when the backend signals `shouldOpen`.
 - See `ESP/door_latch/door_latch.ino` for wiring and logic. Use proper level shifting and power for your actuator.
 
-Notes and caveats
-- Hackathon quality: quick and playful, not production-hardened. Be careful with exposing the physical latch to the public — treat it as a demo.
+Notes
+- Hackathon quality: quick and playful, not production-hardened. Be careful with exposing the physical latch to the public - make sure to treat it as a demo.
 - Security: no authentication on admin endpoints; do not deploy to an untrusted network without adding auth and safety checks.
 
 Enjoy the nonsense.
