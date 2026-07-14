@@ -1,3 +1,8 @@
+/**
+ * Admin routes - endpoints for administrative lock controls.
+ * @module routes/admin.routes
+ */
+
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/admin.controller');

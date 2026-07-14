@@ -1,3 +1,9 @@
+/**
+ * ResponseCard component
+ * Shows the AI judge's evaluation, score, and whether audio generation is in progress.
+ * @component
+ * @param {{evaluation: {score:number,shouldOpen:boolean,reply:string}, isGeneratingAudio:boolean}} props
+ */
 import React from 'react';
 
 const ResponseCard = ({ evaluation, isGeneratingAudio }) => {

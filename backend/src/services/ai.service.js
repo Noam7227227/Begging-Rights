@@ -83,7 +83,12 @@ function mockJudge(text) {
 }
 
 /**
- * Call the Google Gemini model API
+ * Call the Google Gemini model API and parse its JSON reply.
+ * @param {string} text - The user's plea text
+ * @param {number} attempts - Attempt count to include in the system prompt
+ * @param {string} apiKey - Gemini API key
+ * @returns {Promise<{score:number,shouldOpen:boolean,reply:string}>}
+ * @throws {Error} When the API request fails or returns unexpected format
  */
 async function callGemini(text, attempts, apiKey) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
@@ -115,7 +120,12 @@ async function callGemini(text, attempts, apiKey) {
 }
 
 /**
- * Call the Groq model API (OpenAI-compatible)
+ * Call the Groq model API (OpenAI-compatible) and parse its JSON reply.
+ * @param {string} text - The user's plea text
+ * @param {number} attempts - Attempt count to include in the system prompt
+ * @param {string} apiKey - Groq API key
+ * @returns {Promise<{score:number,shouldOpen:boolean,reply:string}>}
+ * @throws {Error} When the API request fails or returns unexpected format
  */
 async function callGroq(text, attempts, apiKey) {
     const url = 'https://api.groq.com/openai/v1/chat/completions';
@@ -152,7 +162,10 @@ async function callGroq(text, attempts, apiKey) {
 }
 
 /**
- * Validates parsed model responses
+ * Validate a parsed result object returned by a model provider and normalize fields.
+ * @param {Object} result - Parsed JSON object from provider
+ * @param {string} providerName - Provider identifier for logging
+ * @returns {{score:number,shouldOpen:boolean,reply:string}}
  */
 function validateResult(result, providerName) {
     const score = typeof result.score === 'number' ? result.score : 0;

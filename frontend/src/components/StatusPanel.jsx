@@ -1,3 +1,9 @@
+/**
+ * StatusPanel component
+ * Displays current lock telemetry: status, attempts, and last score.
+ * @component
+ * @param {{status: string, attempts: number, lastScore: number}} props
+ */
 import React from 'react';
 
 const StatusPanel = ({ status, attempts, lastScore }) => {

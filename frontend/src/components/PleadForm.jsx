@@ -1,3 +1,9 @@
+/**
+ * PleadForm component
+ * Small UI to simulate or submit a voice/text plea to the AI judge.
+ * @component
+ * @param {{onSubmit: Function, isLoading: boolean}} props
+ */
 import React, { useState, useEffect } from 'react';
 
 // Mock pleas to randomly select from to simulate speech-to-text
