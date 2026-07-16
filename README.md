@@ -6,6 +6,9 @@ A tiny hackathon project for making cool, stupid, unnecessary things.
 
 This project wires together a web frontend, a Node.js backend, and an ESP32-based door latch so a sassy AI judge can decide whether to physically unlock a gate.
 
+![ESP32-controlled lock](pictures/box.jpeg)
+*The demo box*
+
 Why it exists
 - Built fast for a hackathon: the goal was to make something playful and unnecessary- combining software and hardware together.
 - Objective: explore audio, speech-to-text, LLM-driven responses, and simple IoT actuation (ESP32 controlling a door latch).
@@ -31,6 +34,9 @@ Quick run (frontend)
 npm install
 npm run dev
 ```
+
+![User interface begging screen](pictures/screen.png)
+*The frontend screen where the user makes their case to the AI judge.*
 
 Environment variables
 - `ELEVENLABS_API_KEY` — (optional) For TTS audio generation.
