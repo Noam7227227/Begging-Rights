@@ -48,6 +48,12 @@ Hardware
 - This was tested with an ESP32 controlling a small servo latch. The ESP polls the backend and will actuate when the backend signals `shouldOpen`.
 - See `ESP/door_latch/door_latch.ino` for wiring and logic. Use proper level shifting and power for your actuator.
 
+![3D-printed enclosure / box](pictures/stl_box.png)
+*The printed box enclosure designed to house the electronics and give the project a compact, self-contained form.*
+
+![3D-printed door latch / stop](pictures/stl_doorstop.png)
+*The printed door latch used to interface with the locking mechanism and help the hardware operate as intended.*
+
 Notes
 - Hackathon quality: quick and playful, not production-hardened. Be careful with exposing the physical latch to the public - make sure to treat it as a demo.
 - Security: no authentication on admin endpoints; do not deploy to an untrusted network without adding auth and safety checks.
