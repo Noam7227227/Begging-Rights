@@ -2,7 +2,7 @@
 
 Begging Rights - Because passwords are outdated. Convince the lock you're worthy, survive its judgment, and experience premium Humiliation-as-a-Service (HaaS). 
 
-A tiny hackathon project for making cool, stupid, unnecessary things.
+A hackathon project for making cool, stupid, unnecessary things.
 
 This project wires together a web frontend, a Node.js backend, and an ESP32-based door latch so a sassy AI judge can decide whether to physically unlock a gate.
 
@@ -49,9 +49,11 @@ Hardware
 - See `ESP/door_latch/door_latch.ino` for wiring and logic. Use proper level shifting and power for your actuator.
 
 ![3D-printed enclosure / box](pictures/stl_box.png)
+
 *The printed box enclosure designed to house the electronics and give the project a compact, self-contained form.*
 
 ![3D-printed door latch / stop](pictures/stl_doorstop.png)
+
 *The printed door latch used to interface with the locking mechanism and help the hardware operate as intended.*
 
 Notes
